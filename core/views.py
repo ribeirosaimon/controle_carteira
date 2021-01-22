@@ -14,8 +14,6 @@ class AcaoViewSet(ModelViewSet):
         vendas = VendaModel.objects.all()
         portfolio = Carteira()
         [portfolio.comprar(x.acao,float(x.preco_medio),float(x.quantidade),x.nacional,x.data) for x in compras]
-        [portfolio.vender(x.acao,float(x.preco_medio),float(x.quantidade),x.nacional,x.data) for x in vendas]
-        print(vendas)
-
+        [portfolio.vender(x.acao,float(x.preco_medio),float(x.quantidade),nacional=x.nacional,data=x.data) for x in vendas]
         portfolio.inicializar_carteira()
         return Response({'carteira':portfolio.portfolio_carteira()})
