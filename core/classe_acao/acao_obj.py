@@ -1,13 +1,16 @@
 from .acao.calculos import *
 
 class Carteira:
-    portfolio = []
-    vendas = []
-    caixa_br = []
-    caixa_usa = []
-    info_portfolio = []
-    posicao_usa = []
-    posicao_br = []
+    
+    def reset_carteira(self):
+        self.portfolio = list()
+        self.portfolio = list()
+        self.vendas = list()
+        self.caixa_br = list()
+        self.caixa_usa = list()
+        self.info_portfolio = list()
+        self.posicao_usa = list()
+        self.posicao_br = list()
 
     def inicializar_carteira(self):
         for acoes in self.portfolio:
@@ -61,18 +64,18 @@ class Carteira:
     def vender(self, acao, pv, qtd, data, nacional=True, dolar=0):
         for valores in self.portfolio:
             if valores['acao'] == acao:
-                if valores['qtd'] - qtd > 0:
+                if valores['qtd'] - qtd >= 0:
                     valores['qtd'] = valores['qtd'] - qtd
                     valores['data_venda'] = data
                     if nacional == False:
                         valores['dolar'] = dolar
+                    if valores['qtd'] == 0:
+                        self.portfolio.remove(valores)
                 else:
-                    erro = 'Quantidade não pode ser menor que 0'
-                    print(erro)
+                    erro = {'error':f'Quantidade da ação {valores["acao"]} não pode ser menor que 0'}
                     return erro
             elif acao not in [x['acao'] for x in self.portfolio]:
-                erro = 'Você não tem essa ação'
-                print(erro)
+                erro = {'error':'Você não tem essa ação'}
                 return erro
         dicionario = {
             'acao':acao,
@@ -83,6 +86,7 @@ class Carteira:
         if nacional == False:
             dicionario['dolar'] = dolar
         self.vendas.append(dicionario)
+        return True
 
     def patrimonio(self, nacional=None, usdbrl=False):
         todo_patrimonio = []
