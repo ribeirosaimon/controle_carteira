@@ -58,7 +58,7 @@ class Carteira:
                 self.portfolio.append(dicionario)
 
 
-    def venda(self, acao, pv, qtd, data, nacional=True, dolar=0):
+    def vender(self, acao, pv, qtd, data, nacional=True, dolar=0):
         for valores in self.portfolio:
             if valores['acao'] == acao:
                 if valores['qtd'] - qtd > 0:

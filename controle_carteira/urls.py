@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from carteira.views import CompraViewSet, VendaViewSet
+from compras.views import CompraViewSet
+from vendas.views import VendaViewSet
 from core.views import AcaoViewSet
 
 router = routers.DefaultRouter()

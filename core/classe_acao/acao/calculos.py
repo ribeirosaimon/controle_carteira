@@ -9,16 +9,6 @@ def preco_acao(acao, portfolio_carteira):
             return round(preco_no_dia,2)
             
 
-'''
-def preco_acao(acao, nacional=True):
-    data = str(date.today())
-    if nacional == True:
-        acao = f'{acao}.sa'
-    url = f'https://query2.finance.yahoo.com/v8/finance/chart/{acao}?symbol={acao}&period1={data_utc(data, mes_passado=True)}&period2={data_utc(data, mes_passado=False)}&interval=1d&includePrePost=true&events=div%2Csplit'
-    info = requests.get(url)
-    preco = round(info.json()['chart']['result'][0]['indicators']['adjclose'][0]['adjclose'][-1],2)
-    return preco
-'''
 
 def info_das_acoes(acao, nacional=True):
     informacao_retorno = []
