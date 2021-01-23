@@ -4,19 +4,21 @@ class Carteira:
     
     def reset_carteira(self):
         self.portfolio = list()
-        self.portfolio = list()
         self.vendas = list()
         self.caixa_br = list()
         self.caixa_usa = list()
         self.info_portfolio = list()
         self.posicao_usa = list()
         self.posicao_br = list()
+        self.info_vendas = list()
 
     def inicializar_carteira(self):
         for acoes in self.portfolio:
-            info_acao = info_das_acoes(acoes['acao'], acoes['nacional'])
-            self.info_portfolio.append(info_acao)
-        
+            if acoes['acao'] == 'caixa':
+                pass
+            else:
+                info_acao = info_das_acoes(acoes['acao'], acoes['nacional'])
+                self.info_portfolio.append(info_acao)
 
     def portfolio_carteira(self):
         return self.portfolio
@@ -65,6 +67,7 @@ class Carteira:
         for valores in self.portfolio:
             if valores['acao'] == acao:
                 if valores['qtd'] - qtd >= 0:
+                    pm_acao = valores['pm']
                     valores['qtd'] = valores['qtd'] - qtd
                     valores['data_venda'] = data
                     if nacional == False:
@@ -79,8 +82,10 @@ class Carteira:
                 return erro
         dicionario = {
             'acao':acao,
-            'pv':pv,
+            'preco_venda':pv,
+            'preco_medio':pm_acao,
             'qtd':qtd,
+            'nacional':nacional,
             'data_venda':data
         }
         if nacional == False:
@@ -88,16 +93,16 @@ class Carteira:
         self.vendas.append(dicionario)
         return True
 
-    def patrimonio(self, nacional=None, usdbrl=False):
+    def patrimonio(self, dolar, nacional=None, usdbrl=True):
         todo_patrimonio = []
         patrimonio_separado = []
         soma_caixa_br = sum(self.caixa_br)
-        soma_caixa_usa = sum(self.caixa_usa) * get_dolar_price()
+        soma_caixa_usa = sum(self.caixa_usa) * dolar
         for acao in self.portfolio:
             preco = preco_acao(acao['acao'], self.info_portfolio)
             posicao = preco * acao['qtd']
             if acao['nacional'] == False:
-                posicao = posicao * get_dolar_price()
+                posicao = posicao * dolar
             todo_patrimonio.append(posicao)
             preco = preco_acao(acao['acao'], self.info_portfolio)
             posicao = preco * acao['qtd']
@@ -115,35 +120,41 @@ class Carteira:
             soma = sum(patrimonio_separado)
             soma = soma + soma_caixa_usa
             if usdbrl == True:
-                soma = soma * get_dolar_price()
+                soma = soma * dolar
             return round(soma,2)
         soma = sum(todo_patrimonio)
         soma = soma + soma_caixa_br + soma_caixa_usa
         return round(soma,2)
 
-
-    def lucro_carteira(self, nacional=None):
-        lucro_pra_retornar = []
-        todos_acoes = []
+    def lucro_carteira(self,dolar,acao=None,nacional=None):
+        acao_separada = []
+        todas_acoes = []
+        usa_acao = []
+        br_acao = []
         for valores in self.portfolio:
             patrimonio = preco_acao(valores['acao'], self.info_portfolio) * valores['qtd']
             custo = valores['pm'] * valores['qtd']
             lucro = patrimonio - custo
-            if valores['nacional'] == False:
-                lucro = lucro * get_dolar_price()
-            todos_acoes.append(lucro)
-            if nacional == True:
-                if valores['nacional'] == True:
-                    lucro_pra_retornar.append(lucro)
             if nacional == False:
-                if valores['nacional'] == False:
-                    lucro = lucro * get_dolar_price()
-                    lucro_pra_retornar.append(lucro)
-        if nacional == True or False:
-            return round(sum(lucro_pra_retornar),2)
-        return round(sum(todos_acoes),2) 
+                lucro = lucro * dolar
+                usa_acao.append(lucro)
+            if nacional == True:
+                br_acao.append(lucro)
+            if acao == valores['acao']:
+                acao_separada.append(lucro)
+            todas_acoes.append(lucro)
+        if acao == None:
+            if nacional == None:
+                return round(sum(todas_acoes),2)
+            if nacional == True:
+                return round(sum(br_acao),2)
+            if nacional == False:
+                return round(sum(usa_acao),2)
+        if acao != None:
+            return round(sum(acao_separada),2)
 
-    def retorno(self, acao=None):
+
+    def retorno(self, dolar, acao=None):
         posicao_total = []
         custo_total = []
         posicao_de_acao_separada = []
@@ -153,8 +164,8 @@ class Carteira:
             posicao = preco_acao(valores['acao'], self.info_portfolio) * valores['qtd']
             custo = valores['pm'] * valores['qtd']
             if valores['nacional'] == False:
-                posicao = posicao * get_dolar_price()
-                custo = custo * get_dolar_price()
+                posicao = posicao * dolar
+                custo = custo * dolar
             posicao_total.append(posicao)
             custo_total.append(custo)
             if acao != None:    
@@ -167,14 +178,14 @@ class Carteira:
         calculo = round((sum(posicao_total) / sum(custo_total)) - 1,4)
         return calculo
 
-    def peso_da_carteira(self, acao=None, caixa=None, nacional=None):
+    def peso_da_carteira(self, dolar, acao=None, caixa=None, nacional=None):
         dicionario_retorno = []
         dicionario_completo = []
         dicionario_caixa = []
         patrimonio = self.patrimonio()
-        calculo_caixa_usa = round((sum(self.caixa_usa) * get_dolar_price()) / patrimonio,5)
+        calculo_caixa_usa = round((sum(self.caixa_usa) * dolar) / patrimonio,5)
         calculo_caixa_br = round(sum(self.caixa_br) / patrimonio,5)
-        calculo_caixa_total = round((sum(self.caixa_br) + (sum(self.caixa_usa)* get_dolar_price())) / patrimonio,5)
+        calculo_caixa_total = round((sum(self.caixa_br) + (sum(self.caixa_usa)* dolar)) / patrimonio,5)
         if caixa == True:     
             if nacional == True:
                 dicionario_caixa.append({'caixa_br':calculo_caixa_br})
@@ -187,7 +198,7 @@ class Carteira:
         for valores in self.portfolio:
             posicao = preco_acao(valores['acao'], self.info_portfolio) * valores['qtd']
             if valores['nacional'] == False:
-                posicao = posicao * get_dolar_price()
+                posicao = posicao * dolar
             peso = posicao / patrimonio
             retorno = {'acao':valores['acao'],'peso':round(peso,4)}
             dicionario_completo.append(retorno)
@@ -199,3 +210,15 @@ class Carteira:
         dicionario_completo.append(dicionario_caixa)
         return dicionario_completo
 
+    def posicao(self, dolar, acao):
+        for valores in self.portfolio:
+            if valores['acao'] == acao:
+                posicao = preco_acao(valores['acao'], self.info_portfolio) * valores['qtd']
+                if valores['nacional'] == False:
+                    posicao = posicao * dolar
+        return posicao
+
+    def preco_medio(self, acao):
+        for valores in self.portfolio:
+            if valores['acao'] == acao:
+                return valores['preco_medio']
