@@ -12,6 +12,7 @@ class RelatorioViewSet(ModelViewSet):
         imposto = Imposto_de_renda()
         vendas = VendaModel.objects.all()
         ano_info = int(self.request.query_params.get('ano'))
-        vendas_do_ano = [x for x in vendas if x.data.year == ano_info]
+        mes_info = int(self.request.query_params.get('mes'))
+        vendas_do_ano = [x for x in vendas if x.data.year == ano_info and x.data.month == mes_info]
         dict_imposto = imposto.isencao_ir(vendas_do_ano) 
         return Response({'teste':dict_imposto})
