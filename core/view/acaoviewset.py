@@ -20,12 +20,12 @@ class AcaoViewSet(ModelViewSet):
         portfolio = Carteira()
         portfolio.reset_carteira()
         lista_compras = [portfolio.comprar(x.acao,float(x.preco_medio),float(x.quantidade),x.nacional,x.data) for x in compras if x.acao != 'caixa']
-        lista_vendas = [portfolio.vender(x.acao,float(x.preco_medio),float(x.quantidade),nacional=x.nacional,data=x.data) for x in vendas]
+        lista_vendas = [portfolio.vender(x.acao,float(x.preco_medio),float(x.quantidade),nacional=x.nacional,data=x.data, dolar=float(x.dolar)) for x in vendas]
         vendas_do_mes = [x for x in vendas if x.data.year == ano_info and x.data.month == mes_info]
         caixa = [portfolio.caixa(float(x.preco_medio), x.nacional) for x in compras if x.acao == 'caixa']
 
         dict_imposto = imposto.isencao_ir(vendas_do_mes, dolar) 
-        ir_devendo = imposto.ir_devido(portfolio.relatorio_vendas(),dolar)
+        ir_devendo = imposto.ir_devido(portfolio.relatorio_vendas())
 
         portfolio.inicializar_carteira()
         informacoes_da_carteira = info_carteira(portfolio, dolar)

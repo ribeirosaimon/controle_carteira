@@ -23,9 +23,11 @@ class Imposto_de_renda:
         return dict_retorno
 
 
-    def ir_devido(self, relatorio_vendas, dolar):
+    def ir_devido(self, relatorio_vendas):
         lucro_br, lucro_usa = [],[]
+        print(relatorio_vendas)
         for vendas in relatorio_vendas:
+            dolar = vendas['dolar']
             lucro = (vendas['preco_venda'] - vendas['preco_medio']) * vendas['qtd']
             if vendas['nacional'] == False:
                 lucro = lucro * dolar
