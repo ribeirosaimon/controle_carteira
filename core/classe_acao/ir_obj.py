@@ -25,7 +25,6 @@ class Imposto_de_renda:
 
     def ir_devido(self, relatorio_vendas):
         lucro_br, lucro_usa = [],[]
-        print(relatorio_vendas)
         for vendas in relatorio_vendas:
             dolar = vendas['dolar']
             lucro = (vendas['preco_venda'] - vendas['preco_medio']) * vendas['qtd']

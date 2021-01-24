@@ -25,6 +25,11 @@ class Carteira:
 
     def relatorio_vendas(self):
         return self.vendas
+    
+    def info_caixa(self, dolar):
+        caixa_br = {'caixa_br':round(sum(self.caixa_br),2)}
+        caixa_usa = {'caixa_usa':round(sum(self.caixa_usa) * dolar,2)}
+        return [caixa_br, caixa_usa]
 
     def caixa(self, valor, nacional):
         if nacional == True:
@@ -178,11 +183,14 @@ class Carteira:
         calculo = round((sum(posicao_total) / sum(custo_total)) - 1,4)
         return calculo
 
+    def peso_da_carteira(self, dolar, acao, list_caixa):
+        pass
+    '''
     def peso_da_carteira(self, dolar, acao=None, caixa=None, nacional=None):
         dicionario_retorno = []
         dicionario_completo = []
         dicionario_caixa = []
-        patrimonio = self.patrimonio()
+        patrimonio = self.patrimonio(dolar)
         calculo_caixa_usa = round((sum(self.caixa_usa) * dolar) / patrimonio,5)
         calculo_caixa_br = round(sum(self.caixa_br) / patrimonio,5)
         calculo_caixa_total = round((sum(self.caixa_br) + (sum(self.caixa_usa)* dolar)) / patrimonio,5)
@@ -200,7 +208,7 @@ class Carteira:
             if valores['nacional'] == False:
                 posicao = posicao * dolar
             peso = posicao / patrimonio
-            retorno = {'acao':valores['acao'],'peso':round(peso,4)}
+            retorno = {'peso':round(peso,4)}
             dicionario_completo.append(retorno)
             if valores['acao'] == acao:
                 dicionario_retorno.append(retorno)     
@@ -208,8 +216,10 @@ class Carteira:
         dicionario_caixa = {'acao':'caixa',
                             'peso':calculo_caixa_total}
         dicionario_completo.append(dicionario_caixa)
+        if acao != None:
+            return dicionario_completo[0]
         return dicionario_completo
-
+    '''
     def posicao(self, dolar, acao):
         for valores in self.portfolio:
             if valores['acao'] == acao:
