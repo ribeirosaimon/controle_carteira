@@ -7,7 +7,7 @@ def info_carteira(portfolio, dolar, caixa):
         retorno_acao = portfolio.retorno(dolar,acao['acao'])
         lucro_acao = portfolio.lucro_carteira(dolar,acao['acao'],acao['nacional'])
         posicao_na_carteira = round(portfolio.posicao(dolar,acao['acao']),2)
-        peso_acao = portfolio.peso_da_carteira(dolar, acao=acao['acao'],caixa)
+        peso_acao = portfolio.peso_da_carteira(dolar, acao['acao'], caixa)
         dict_info = {'acao':acao['acao'],
                     'info':{
                         'lucro':lucro_acao,
