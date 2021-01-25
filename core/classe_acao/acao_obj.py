@@ -210,3 +210,6 @@ class Carteira:
         for valores in self.portfolio:
             if valores['acao'] == acao:
                 return valores['preco_medio']
+
+    def media_movel_expodencial(self, acao):
+        print(self.info_portfolio[0])

@@ -8,12 +8,14 @@ def info_carteira(portfolio, dolar, caixa):
         lucro_acao = portfolio.lucro_carteira(dolar,acao['acao'],acao['nacional'])
         posicao_na_carteira = round(portfolio.posicao(dolar,acao['acao']),2)
         peso_acao = portfolio.peso_da_carteira(dolar, acao['acao'], caixa)
+        media_movel = portfolio.media_movel_expodencial(acao['acao'])
         dict_info = {'acao':acao['acao'],
                     'info':{
                         'lucro':lucro_acao,
                         'retorno':retorno_acao,
                         'posicao':posicao_na_carteira,
-                        'peso':peso_acao
+                        'peso':peso_acao,
+                        'mme':media_movel
                         }
                     }
         info_portfolio.append(dict_info)
