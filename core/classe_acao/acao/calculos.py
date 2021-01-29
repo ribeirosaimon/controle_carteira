@@ -1,11 +1,10 @@
-from datetime import datetime, timedelta
-from datetime import date
+from datetime import datetime, timedelta, date
 import requests
 
 def preco_acao(acao, portfolio_carteira):
     for valor in portfolio_carteira:
         if valor['acao'] == acao:
-            preco_no_dia = valor['info'][0]['stock']['close']
+            preco_no_dia = valor['info'][0]['dados']['close']
             return round(preco_no_dia,2)
             
 
@@ -27,7 +26,7 @@ def info_das_acoes(acao, nacional=True):
     for index in range(len(fechamento)):
         dicionario = {
                         'data':data_iso(data[index]),
-                        'stock':
+                        'dados':
                                 {
                                     'close':round(fechamento[index],2),
                                     'open':round(abertura[index],2),
@@ -53,8 +52,9 @@ def calculo_preco_medio(pm1, qtd1, pm2, qtd2):
 
 def data_utc(data_str, mes_passado = False):
     data = datetime.strptime(data_str, '%Y-%m-%d').date()
+    data = data - timedelta(hours=-3)
     if mes_passado == True:
-        data = data - timedelta(days=31)
+        data = data - timedelta(days=92)
     data = data - datetime(1970, 1, 1).date()
     return int(data.total_seconds())
 
@@ -71,3 +71,23 @@ def get_dolar_price():
     #dolar_ultimo_dia = float(resposta.json()[1]['ask'])
     return dolar_do_dia
 
+
+def calculo_de_volume(volume_medio,volume_diario,horario_comercial=8,inicio_expediente=10):
+    hora_do_dia = int(datetime.now().strftime('%H'))
+    minuto_do_dia = int(datetime.now().strftime('%M'))
+    if minuto_do_dia > 45:
+        hora_do_dia = hora_do_dia + 1
+    tempo_de_expediente = hora_do_dia - inicio_expediente
+    volume_medio_por_hora = int(round(volume_medio / horario_comercial,0))
+    volume_medio_do_dia = volume_medio_por_hora * tempo_de_expediente
+    porcentagem_diferenca = round((volume_diario / volume_medio_do_dia)-1,2)
+    dict_volume = {'volume':volume_diario,
+                    'dados':{'avg_vol':volume_medio,
+                             'high':'none',
+                             'percent':porcentagem_diferenca}}
+
+    if volume_diario > volume_medio_do_dia:
+        dict_volume['dados']['high'] = True
+    else:
+        dict_volume['dados']['high'] = False
+    return dict_volume
