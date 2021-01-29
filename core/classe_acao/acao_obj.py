@@ -275,7 +275,6 @@ class Carteira:
         mma_minima = round(sum(minimas) / 3,2)
         mma_maxima = round(sum(maximas)/3,2)
         dict_hilo = {'hilo':'none'}
-        print(mma_maxima, mma_minima, fechamento)
         if fechamento < mma_minima:
             dict_hilo['hilo'] = 'buy'
         if fechamento > mma_maxima:
@@ -334,7 +333,6 @@ class Carteira:
     def avg_vol(self,acao):
         avg_vol = []
         volume_diario = [x['info'][0]['dados']['volume'] for x in self.info_portfolio if x['acao']== acao][0]
-        print(volume_diario)
         for valores in self.info_portfolio:
             if acao == valores['acao']:
                 for dados in valores['info']:
