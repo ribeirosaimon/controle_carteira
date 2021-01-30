@@ -3,6 +3,7 @@ from core.classe_acao.acao_obj import Carteira
 def info_carteira(portfolio, dolar, caixa):
     carteira = portfolio.portfolio_carteira()
     info_portfolio = []
+    print(carteira)
     for acao in carteira:
         retorno_acao = portfolio.retorno(dolar,acao['acao'])
         lucro_acao = portfolio.lucro_carteira(dolar,acao['acao'],acao['nacional'])
@@ -14,7 +15,7 @@ def info_carteira(portfolio, dolar, caixa):
         bandas_de_bolinger_acao = portfolio.bandas_de_bolinger(acao['acao'])
         rsi_acao = portfolio.rsi(acao['acao'])
         avg_vol_acao = portfolio.avg_vol(acao['acao'])
-        dict_info = {'acao':acao['acao'],
+        dict_info = {'acao':acao,
                     'info':{
                         'lucro':lucro_acao,
                         'retorno':retorno_acao,

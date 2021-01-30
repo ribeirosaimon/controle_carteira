@@ -33,8 +33,7 @@ class AcaoViewSet(ModelViewSet):
         erro = [x for x in lista_vendas if x != True]
         if len(erro) != 0:
             return Response({'error':erro})
-        return Response({'carteira':portfolio.portfolio_carteira(),
-                         'caixa':caixa,
+        return Response({'caixa':caixa,
                          'ir':{'isencao':dict_imposto,
                                 'ir_devido':ir_devendo},
                         'info':informacoes_da_carteira})
