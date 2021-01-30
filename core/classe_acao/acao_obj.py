@@ -71,21 +71,9 @@ class Carteira:
                 self.portfolio.append(dicionario)
 
 
-    def vender(self, acao, pv, qtd, data, nacional=True, dolar=0):
+    def vender(self, acao, pv, pm_acao, qtd, data, nacional=True, dolar=0):
         for valores in self.portfolio:
-            if valores['acao'] == acao:
-                if valores['qtd'] - qtd >= 0:
-                    pm_acao = valores['pm']
-                    valores['qtd'] = valores['qtd'] - qtd
-                    valores['data_venda'] = data
-                    if nacional == False:
-                        valores['dolar'] = dolar
-                    if valores['qtd'] == 0:
-                        self.portfolio.remove(valores)
-                else:
-                    erro = {'error':f'Quantidade da ação {valores["acao"]} não pode ser menor que 0'}
-                    return erro
-            elif acao not in [x['acao'] for x in self.portfolio]:
+            if acao not in [x['acao'] for x in self.portfolio]:
                 erro = {'error':'Você não tem essa ação'}
                 return erro
         dicionario = {

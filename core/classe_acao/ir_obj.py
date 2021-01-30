@@ -4,7 +4,7 @@ class Imposto_de_renda:
         isencao_do_ir_usa = [34999.99, ]
         isento_br, isento_usa = True, True
         for x in lista:
-            valor_total = float(x.preco_medio * x.quantidade)
+            valor_total = float(x.preco_venda * x.quantidade)
             if x.nacional == True:
                 isencao_do_ir_br.append(-valor_total) 
             if x.nacional == False:

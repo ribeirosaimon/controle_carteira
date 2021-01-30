@@ -3,7 +3,6 @@ from core.classe_acao.acao_obj import Carteira
 def info_carteira(portfolio, dolar, caixa):
     carteira = portfolio.portfolio_carteira()
     info_portfolio = []
-    print(carteira)
     for acao in carteira:
         retorno_acao = portfolio.retorno(dolar,acao['acao'])
         lucro_acao = portfolio.lucro_carteira(dolar,acao['acao'],acao['nacional'])
