@@ -31,10 +31,12 @@ class AcaoViewSet(ModelViewSet):
         portfolio.inicializar_carteira()
         caixa = portfolio.info_caixa(dolar)
         informacoes_da_carteira = info_carteira(portfolio, dolar, caixa)
-        erro = [x for x in lista_vendas if x != True]
-        if len(erro) != 0:
-            return Response({'error':erro})
-        return Response({'caixa':caixa,
+        return Response({'patrimonio':portfolio.patrimonio(dolar),
+                         'patrimonio_br':portfolio.patrimonio(dolar,nacional=True),
+                         'patrimonio_usa':portfolio.patrimonio(dolar,nacional=False),
+                         'lucro_carteira_br':portfolio.lucro_carteira(dolar,nacional=True,acao=None),
+                         'lucro_carteira_usa':portfolio.lucro_carteira(dolar,nacional=False,acao=None),
+                         'caixa':caixa,
                          'ir':{'isencao':dict_imposto,
                                 'ir_devido':ir_devendo},
                         'info':informacoes_da_carteira})

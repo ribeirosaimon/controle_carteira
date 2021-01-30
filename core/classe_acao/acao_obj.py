@@ -42,8 +42,6 @@ class Carteira:
             self.caixa_usa.append(valor)
             return round(sum(self.caixa_usa),2)
 
-
-
     def comprar(self, acao, pm, qtd, nacional, data):
         if len(self.portfolio) == 0:
             dicionario = {
@@ -72,10 +70,6 @@ class Carteira:
 
 
     def vender(self, acao, pv, pm_acao, qtd, data, nacional=True, dolar=0):
-        for valores in self.portfolio:
-            if acao not in [x['acao'] for x in self.portfolio]:
-                erro = {'error':'Você não tem essa ação'}
-                return erro
         dicionario = {
             'acao':acao,
             'preco_venda':pv,
@@ -89,9 +83,9 @@ class Carteira:
         self.vendas.append(dicionario)
         return True
 
-    def patrimonio(self, dolar, nacional=None, usdbrl=True):
+    def patrimonio(self,dolar,nacional=None):
         todo_patrimonio = []
-        patrimonio_separado = []
+        patrimonio_br,patrimonio_usa = [], []
         soma_caixa_br = sum(self.caixa_br)
         soma_caixa_usa = sum(self.caixa_usa) * dolar
         for acao in self.portfolio:
@@ -99,28 +93,20 @@ class Carteira:
             posicao = preco * acao['qtd']
             if acao['nacional'] == False:
                 posicao = posicao * dolar
-            todo_patrimonio.append(posicao)
-            preco = preco_acao(acao['acao'], self.info_portfolio)
-            posicao = preco * acao['qtd']
             if nacional == True:
                 if acao['nacional'] == True:
-                    patrimonio_separado.append(posicao)
+                    patrimonio_br.append(posicao)
             if nacional == False:
                 if acao['nacional'] == False:
-                    patrimonio_separado.append(posicao)
-        if nacional == True:
-            soma = sum(patrimonio_separado)
-            soma = soma + soma_caixa_br
-            return round(soma,2)
+                    patrimonio_usa.append(posicao)
+            todo_patrimonio.append(posicao)
+        soma_do_patrimonio = round(sum(todo_patrimonio) + soma_caixa_br + soma_caixa_usa,2)
         if nacional == False:
-            soma = sum(patrimonio_separado)
-            soma = soma + soma_caixa_usa
-            if usdbrl == True:
-                soma = soma * dolar
-            return round(soma,2)
-        soma = sum(todo_patrimonio)
-        soma = soma + soma_caixa_br + soma_caixa_usa
-        return round(soma,2)
+            return round(sum(patrimonio_usa) + soma_caixa_usa,2)
+        if nacional == True:
+            return round(sum(patrimonio_br) + soma_caixa_br,2)
+        return soma_do_patrimonio
+
 
     def lucro_carteira(self,dolar,acao=None,nacional=None):
         acao_separada = []
@@ -132,10 +118,12 @@ class Carteira:
             custo = valores['pm'] * valores['qtd']
             lucro = patrimonio - custo
             if nacional == False:
-                lucro = lucro * dolar
-                usa_acao.append(lucro)
+                if valores['nacional'] == False:
+                    lucro = lucro * dolar
+                    usa_acao.append(lucro)
             if nacional == True:
-                br_acao.append(lucro)
+                if valores['nacional'] == True:
+                    br_acao.append(lucro)
             if acao == valores['acao']:
                 acao_separada.append(lucro)
             todas_acoes.append(lucro)
@@ -207,18 +195,19 @@ class Carteira:
                 for index in range(0,tempo):
                     fechamento = valores['info'][index]['dados']['close']
                     fechamentos.append(fechamento)
-        mma = sum(fechamentos) / tempo
+        mma = round(sum(fechamentos) / tempo,2)
         close = fechamentos[0]
         if close < mma:
             compra = True
-        dict_mma = {'mma':{'buy':compra}}
+        dict_mma = {'mma':mma,
+                    'info':{'buy':compra}}
         return dict_mma
 
     def topo_fundo(self, acao, tempo=2):
         contador_max, contador_min = 0,0
         resultado = [x['info'][0]['dados'] for x in self.info_portfolio if x['acao']== acao]
         candle_referencia = {'minima':resultado[0]['min'],'maxima':resultado[0]['max']}
-        indicador = {'top':['None',0],'bottom':['None',0]}
+        indicador = {'top':['none',0],'bottom':['none',0]}
         for valores in self.info_portfolio:
             if acao == valores['acao']:
                 for dados in valores['info'][::-1]:
@@ -262,7 +251,8 @@ class Carteira:
 
         mma_minima = round(sum(minimas) / 3,2)
         mma_maxima = round(sum(maximas)/3,2)
-        dict_hilo = {'hilo':'none'}
+        dict_hilo = {'hilo':'none',
+                     'info':{'top':mma_maxima,'bottom':mma_minima}}
         if fechamento < mma_minima:
             dict_hilo['hilo'] = 'buy'
         if fechamento > mma_maxima:
@@ -272,7 +262,7 @@ class Carteira:
 
     def bandas_de_bolinger(self,acao,tempo=20):
         fechamentos,lista_quadrados = [],[]
-        dict_bolinger = {'bollinger':'None',
+        dict_bolinger = {'bollinger':'none',
                          'dados':{'top':0,
                                   'bottom':0}}
         fechamento = [x['info'][0]['dados']['close'] for x in self.info_portfolio if x['acao']== acao][0] 
