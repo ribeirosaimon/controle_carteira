@@ -84,9 +84,10 @@ class Carteira:
         return True
 
     def preco_da_acao(self,acao):
-        for acao in self.portfolio:
-            preco = preco_acao(acao['acao'], self.info_portfolio)
-            return preco
+        for valor in self.portfolio:
+            preco = preco_acao(valor['acao'], self.info_portfolio)
+            if valor['acao'] == acao:
+                return preco
 
     def patrimonio(self,dolar,nacional=None):
         todo_patrimonio = []
