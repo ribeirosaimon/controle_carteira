@@ -83,6 +83,11 @@ class Carteira:
         self.vendas.append(dicionario)
         return True
 
+    def preco_da_acao(self,acao):
+        for acao in self.portfolio:
+            preco = preco_acao(acao['acao'], self.info_portfolio)
+            return preco
+
     def patrimonio(self,dolar,nacional=None):
         todo_patrimonio = []
         patrimonio_br,patrimonio_usa = [], []

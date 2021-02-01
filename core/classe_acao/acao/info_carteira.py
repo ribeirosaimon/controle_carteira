@@ -14,8 +14,10 @@ def info_carteira(portfolio, dolar, caixa):
         bandas_de_bolinger_acao = portfolio.bandas_de_bolinger(acao['acao'])
         rsi_acao = portfolio.rsi(acao['acao'])
         avg_vol_acao = portfolio.avg_vol(acao['acao'])
+        valor_da_acao = portfolio.preco_da_acao(acao['acao'])
         dict_info = {'acao':acao,
                     'info':{
+                        'preco_acao':valor_da_acao,
                         'lucro':lucro_acao,
                         'retorno':retorno_acao,
                         'posicao':posicao_na_carteira,
