@@ -80,7 +80,10 @@ def calculo_de_volume(volume_medio,volume_diario,horario_comercial=8,inicio_expe
     tempo_de_expediente = hora_do_dia - inicio_expediente
     volume_medio_por_hora = int(round(volume_medio / horario_comercial,0))
     volume_medio_do_dia = volume_medio_por_hora * tempo_de_expediente
-    porcentagem_diferenca = round((volume_medio_do_dia/ volume_diario)-1,2)
+    if volume_diario != 0:
+        porcentagem_diferenca = round((volume_medio_do_dia/ volume_diario)-1,2)
+    else:
+        porcentagem_diferenca = 0
     dict_volume = {'volume':volume_diario,
                     'dados':{'avg_vol':volume_medio,
                              'high':'none',
