@@ -324,3 +324,7 @@ class Carteira:
                     avg_vol.append(volume)
         volume_medio = int(round(sum(avg_vol)/len(avg_vol),0))
         return calculo_de_volume(volume_medio,volume_diario)
+
+    def variacao_da_carteira(self):
+        for valores in self.portfolio:
+            print(valores['acao'])
