@@ -128,5 +128,5 @@ acoes = [
         }
     ]
 
-#for y in acoes:
- #   requests.post(url,data=y)
+for y in acoes:
+    requests.post(url,data=y)

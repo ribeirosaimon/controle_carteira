@@ -113,6 +113,8 @@ def calculo_variacao_patrimonial(db, caixa):
     caixa_total = caixa[0]['caixa_br'] + caixa[1]['caixa_usa']
     carteira_no_dia = db.objects.all()
     fechamento = round(sum([float(x.fechamento) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]) + caixa_total,2)
+    #print([float(x.fechamento) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])
+    #print([x.acao for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])
     abertura = round(sum([float(x.abertura) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+ caixa_total,2)
     minima = round(sum([float(x.minima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+caixa_total,2)
     maxima = round(sum([float(x.maxima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+caixa_total,2)
