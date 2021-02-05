@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from core.serializers import AcaoSerializers
+from core.models import AcaoModel
 from compras.models import CompraModel
 from vendas.models import VendaModel
 from core.classe_acao.acao_obj import Carteira
@@ -31,12 +32,15 @@ class AcaoViewSet(ModelViewSet):
         portfolio.inicializar_carteira()
         caixa = portfolio.info_caixa(dolar)
         informacoes_da_carteira = info_carteira(portfolio, dolar, caixa)
+
+        portfolio.variacao_da_carteira(dolar)
+
         return Response({'patrimonio':{'patrimonio_total':portfolio.patrimonio(dolar),
                          'patrimonio_br':portfolio.patrimonio(dolar,nacional=True),
                          'patrimonio_usa':portfolio.patrimonio(dolar,nacional=False),
                          'lucro_carteira_br':portfolio.lucro_carteira(dolar,nacional=True,acao=None),
                          'lucro_carteira_usa':portfolio.lucro_carteira(dolar,nacional=False,acao=None),
-                         'variacao_carteira':portfolio.variacao_da_carteira(dolar),
+                         'variacao_carteira':calculo_variacao_patrimonial(AcaoModel),
                          'caixa':caixa},
                          'ir':{'isencao':dict_imposto,
                                 'ir_devido':ir_devendo},

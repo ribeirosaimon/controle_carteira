@@ -6,6 +6,8 @@ from vendas.models import VendaModel
 from core.classe_acao.acao_obj import Carteira
 from core.classe_acao.ir_obj import Imposto_de_renda
 from core.classe_acao.acao.calculos import *
+
+
 class RelatorioViewSet(ModelViewSet):
     serializer_class = AcaoSerializers
     def list(self, request,*args,**kwargs):

@@ -58,8 +58,16 @@ def data_utc(data_str, mes_passado = False):
     data = data - datetime(1970, 1, 1).date()
     return int(data.total_seconds())
 
-def data_de_hoje():
-    return str(date.today())
+def data_de_hoje(data_str=True):
+    hora_do_dia = int(datetime.now().strftime('%H'))
+    data = date.today()
+    if hora_do_dia < 9:
+        data = data - timedelta(days=1)
+    if data_str == True:
+        return str(data)
+    else:
+        return data
+    
 
 
 def data_iso(data_str):
@@ -99,3 +107,24 @@ def calculo_de_volume(volume_medio,volume_diario,horario_comercial=8,inicio_expe
     else:
         dict_volume['dados']['high'] = False
     return dict_volume
+
+
+def calculo_variacao_patrimonial(db):
+    carteira_no_dia = db.objects.all()
+    fechamento = round(sum([float(x.fechamento) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]),2)
+    abertura = round(sum([float(x.abertura) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]),2)
+    minima = round(sum([float(x.minima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]),2)
+    maxima = round(sum([float(x.maxima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]),2)
+    volume = round(sum([float(x.volume) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]),0) / 1000000
+    dict_variacao = {'variacao_diaria':
+                                    {
+                                        'data':data_de_hoje(),
+                                        'fechamento':fechamento,
+                                        'abertura':abertura,
+                                        'minima':minima,
+                                        'maxima':maxima,
+                                        'volume':volume,
+                                    }
+                    }
+
+    return dict_variacao
