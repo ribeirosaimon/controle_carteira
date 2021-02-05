@@ -1,4 +1,5 @@
 from .acao.calculos import *
+from .acao.salvar_no_db import *
 
 class Carteira:
     
@@ -325,6 +326,48 @@ class Carteira:
         volume_medio = int(round(sum(avg_vol)/len(avg_vol),0))
         return calculo_de_volume(volume_medio,volume_diario)
 
-    def variacao_da_carteira(self):
-        for valores in self.portfolio:
-            print(valores['acao'])
+    def variacao_da_carteira(self, dolar):
+        lista_variacao = []
+        caixa = sum(self.caixa_br) + (sum(self.caixa_usa) * dolar)
+        dict_variacao = {'variacao':
+                            {'data': data_de_hoje(),
+                            'close':0,
+                            'open':0,
+                            'min':0,
+                            'max':0,
+                            'volume':0
+                            }
+                        }
+        for dados in self.info_portfolio:
+            acao = dados['acao']
+            for valores in dados['info']:
+                if data_de_hoje() == valores['data']:
+                    candle_correto = valores
+                    candle_correto['acao'] = acao
+                    lista_variacao.append(candle_correto)
+        for x in self.portfolio:
+            for y in lista_variacao:
+                if y['acao'] == x['acao']:
+                    y['quantidade'] = x['qtd']
+                    y['nacional'] = x['nacional']
+
+        for valores in lista_variacao:
+            valores['dados']['close'] = valores['dados']['close'] * valores['quantidade']
+            valores['dados']['open'] = valores['dados']['open'] * valores['quantidade']
+            valores['dados']['min'] = valores['dados']['min'] * valores['quantidade']
+            valores['dados']['max'] = valores['dados']['max'] * valores['quantidade']
+
+
+            if valores['nacional'] == False:
+                valores['dados']['close'] *= dolar
+                valores['dados']['open'] *= dolar
+                valores['dados']['min'] *= dolar
+                valores['dados']['max'] *= dolar
+
+        dict_variacao['variacao']['close'] = round(sum([x['dados']['close'] for x in lista_variacao]) + caixa,2)
+        dict_variacao['variacao']['open'] = round(sum([x['dados']['open'] for x in lista_variacao]) + caixa,2)
+        dict_variacao['variacao']['min'] = round(sum([x['dados']['min'] for x in lista_variacao]) + caixa,2)
+        dict_variacao['variacao']['max'] = round(sum([x['dados']['max'] for x in lista_variacao]) + caixa,2)
+        dict_variacao['variacao']['volume'] = round(sum([x['dados']['volume'] for x in lista_variacao]) /1000000,2)
+        salvar_em_db(lista_variacao)
+        return dict_variacao

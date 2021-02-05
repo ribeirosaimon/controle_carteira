@@ -58,6 +58,9 @@ def data_utc(data_str, mes_passado = False):
     data = data - datetime(1970, 1, 1).date()
     return int(data.total_seconds())
 
+def data_de_hoje():
+    return str(date.today())
+
 
 def data_iso(data_str):
     UTC_datetime_converted = datetime.utcfromtimestamp(data_str).date().strftime("%Y-%m-%d")
