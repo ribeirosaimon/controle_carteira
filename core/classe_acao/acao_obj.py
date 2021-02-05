@@ -330,8 +330,9 @@ class Carteira:
     def variacao_da_carteira(self, dolar):
         lista_variacao = []
         caixa = sum(self.caixa_br) + (sum(self.caixa_usa) * dolar)
-        novo_dict = {
-                    'acao':None,
+        for x in self.info_portfolio:
+            novo_dict = {
+                    'acao':x['acao'],
                     'quantidade':0,
                     'data':None,
                     'close':0,
@@ -339,15 +340,13 @@ class Carteira:
                     'min':0,
                     'max':0,
                     'nacional':0}
-        for x in self.info_portfolio:
-            novo_dict['acao'] = x['acao']
             for y in x['info']:
                 if y['data'] == data_de_hoje():
                     novo_dict['data'] = data_de_hoje()
                     novo_dict['close'] = y['dados']['close']
                     novo_dict['open'] = y['dados']['open']
-                    novo_dict['min'] = y['dados']['min']
-                    novo_dict['max'] = y['dados']['max']
+                    novo_dict['min'] = y['dados']['min'] 
+                    novo_dict['max'] = y['dados']['max'] 
                     novo_dict['volume'] = y['dados']['volume']
 
             for z in self.portfolio:
@@ -355,5 +354,4 @@ class Carteira:
                     novo_dict['quantidade'] = z['qtd']
                     novo_dict['nacional'] = z['nacional']
             lista_variacao.append(novo_dict)
-        print(lista_variacao)
-        salvar_em_db(lista_variacao,dolar)
+        salvar_em_db(lista_variacao,dolar,caixa)

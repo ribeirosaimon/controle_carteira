@@ -40,7 +40,7 @@ class AcaoViewSet(ModelViewSet):
                          'patrimonio_usa':portfolio.patrimonio(dolar,nacional=False),
                          'lucro_carteira_br':portfolio.lucro_carteira(dolar,nacional=True,acao=None),
                          'lucro_carteira_usa':portfolio.lucro_carteira(dolar,nacional=False,acao=None),
-                         'variacao_carteira':calculo_variacao_patrimonial(AcaoModel),
+                         'variacao_carteira':calculo_variacao_patrimonial(AcaoModel, caixa),
                          'caixa':caixa},
                          'ir':{'isencao':dict_imposto,
                                 'ir_devido':ir_devendo},
