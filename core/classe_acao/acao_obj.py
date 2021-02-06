@@ -29,12 +29,14 @@ class Carteira:
     
     def info_caixa(self, dolar):
         peso = self.patrimonio(dolar)
-        caixa_br = {'caixa_br':round(sum(self.caixa_br),2),
-                    'peso':round(sum(self.caixa_br)/peso,5)}
-        caixa_usa = {'caixa_usa':round(sum(self.caixa_usa) * dolar,2),
-                    'peso':round((sum(self.caixa_usa) * dolar) / peso,5)}
-        return [caixa_br, caixa_usa]
-
+        try:
+            caixa_br = {'caixa_br':round(sum(self.caixa_br),2),
+                        'peso':round(sum(self.caixa_br)/peso,5)}
+            caixa_usa = {'caixa_usa':round(sum(self.caixa_usa) * dolar,2),
+                        'peso':round((sum(self.caixa_usa) * dolar) / peso,5)}
+            return [caixa_br, caixa_usa]
+        except:
+            return [0,0]
     def caixa(self, valor, nacional):
         if nacional == True:
             self.caixa_br.append(valor)

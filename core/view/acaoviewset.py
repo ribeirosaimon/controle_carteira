@@ -35,18 +35,25 @@ class AcaoViewSet(ModelViewSet):
         caixa = portfolio.info_caixa(dolar)
         
         informacoes_da_carteira = info_carteira(portfolio, dolar, caixa)
-        
-        variacao_do_patrimonio = patrimonio_hoje_ontem(AcaoModel)
-        
+        try:
+            variacao_do_patrimonio = patrimonio_hoje_ontem(AcaoModel)
+            calculo_da_variante = calculo_variacao_patrimonial(AcaoModel, caixa)
+            vol_impl = volatilidade_implicita_da_carteira(variacao_do_patrimonio)
+            variacao_total_da_carteira = variacao_da_carteira(variacao_do_patrimonio)
+        except:
+            variacao_do_patrimonio = 0
+            calculo_da_variante = 0
+            vol_impl = 0
+            variacao_total_da_carteira = 0
         portfolio.variacao_da_carteira(dolar)
         dict_carteira_completo={'patrimonio':{'patrimonio_total':portfolio.patrimonio(dolar),
                          'patrimonio_br':portfolio.patrimonio(dolar,nacional=True),
                          'patrimonio_usa':portfolio.patrimonio(dolar,nacional=False),
                          'lucro_carteira_br':portfolio.lucro_carteira(dolar,nacional=True,acao=None),
                          'lucro_carteira_usa':portfolio.lucro_carteira(dolar,nacional=False,acao=None),
-                         'variacao_carteira':calculo_variacao_patrimonial(AcaoModel, caixa),
-                         'volatilidade_implicita_carteira':volatilidade_implicita_da_carteira(variacao_do_patrimonio),
-                         'variacao_da_carteira':variacao_da_carteira(variacao_do_patrimonio),
+                         'variacao_carteira':calculo_da_variante,
+                         'volatilidade_implicita_carteira':vol_impl,
+                         'variacao_da_carteira':variacao_total_da_carteira,
                          'caixa':caixa},
                          'ir':{'isencao':dict_imposto,
                                 'ir_devido':ir_devendo},
