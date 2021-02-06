@@ -6,6 +6,8 @@ from vendas.views import VendaViewSet
 from core.view.patrimonioviewset import PatrimonioViewSet
 from core.view.acaoviewset import AcaoViewSet
 from core.view.relatorioviewset import RelatorioViewSet
+from controle_variacoes.views import RelatorioCompletoViewSet
+from controle_variacoes.models import RelatorioCompletoModel
 
 router = routers.DefaultRouter()
 router.register('compra', CompraViewSet) #Essa vai ser a URL pra fazer a Compra
@@ -13,6 +15,7 @@ router.register('venda',VendaViewSet)    #Essa vai ser a URL pra fazer a Venda
 router.register('carteira', AcaoViewSet, basename='AcaoModel')
 router.register('impostoderenda', RelatorioViewSet, basename='AcaoModel')
 router.register('patrimonio',PatrimonioViewSet, basename='AcaoModel')
+router.register('relatoriocompleto',RelatorioCompletoViewSet, basename='RelatorioCompletoModel')
 
 urlpatterns = [
     path('', include(router.urls)),

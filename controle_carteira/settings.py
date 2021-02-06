@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'compras',
     'vendas',
+    'controle_variacoes',
     'core'
 ]
 

@@ -8,6 +8,7 @@ from core.classe_acao.acao_obj import Carteira
 from core.classe_acao.ir_obj import Imposto_de_renda
 from core.classe_acao.acao.info_carteira import *
 from core.classe_acao.acao.calculos import *
+from core.classe_acao.acao.salvar_no_db import *
 
 class AcaoViewSet(ModelViewSet):
     serializer_class = AcaoSerializers
@@ -32,16 +33,21 @@ class AcaoViewSet(ModelViewSet):
         portfolio.inicializar_carteira()
         caixa = portfolio.info_caixa(dolar)
         informacoes_da_carteira = info_carteira(portfolio, dolar, caixa)
-
+        variacao_do_patrimonio = patrimonio_hoje_ontem(AcaoModel)
+        
         portfolio.variacao_da_carteira(dolar)
-
-        return Response({'patrimonio':{'patrimonio_total':portfolio.patrimonio(dolar),
+        
+        dict_carteira_completo={'patrimonio':{'patrimonio_total':portfolio.patrimonio(dolar),
                          'patrimonio_br':portfolio.patrimonio(dolar,nacional=True),
                          'patrimonio_usa':portfolio.patrimonio(dolar,nacional=False),
                          'lucro_carteira_br':portfolio.lucro_carteira(dolar,nacional=True,acao=None),
                          'lucro_carteira_usa':portfolio.lucro_carteira(dolar,nacional=False,acao=None),
                          'variacao_carteira':calculo_variacao_patrimonial(AcaoModel, caixa),
+                         'volatilidade_implicita_carteira':volatilidade_implicita_da_carteira(variacao_do_patrimonio),
+                         'variacao_da_carteira':variacao_da_carteira(variacao_do_patrimonio),
                          'caixa':caixa},
                          'ir':{'isencao':dict_imposto,
                                 'ir_devido':ir_devendo},
-                        'info':informacoes_da_carteira})
+                        'info':informacoes_da_carteira}
+        salvando_relatorio_completo(**dict_carteira_completo)
+        return Response(dict_carteira_completo)

@@ -1,7 +1,7 @@
 from core.models import AcaoModel
 from datetime import datetime
 from .calculos import *
-#http://ferramentasdoinvestidor.com.br/financas-quantitativas/como-calcular-a-volatilidade/
+from controle_variacoes.models import RelatorioCompletoModel
 
 
 
@@ -77,3 +77,42 @@ def conferindo_caixa_no_db(caixa):
                     caixa_no_db.data = data_de_hoje()
                     caixa_no_db.save(update_fields=['quantidade','volume','fechamento','abertura','minima','maxima','data'])
 
+def salvando_relatorio_completo(**dados):
+    relatoriomodel = RelatorioCompletoModel.objects.all()
+    patrimonio_total = dados['patrimonio']['patrimonio_total']
+    patrimonio_br = dados['patrimonio']['patrimonio_br']
+    patrimonio_usa = dados['patrimonio']['patrimonio_usa']
+    lucro_carteira_br = dados['patrimonio']['lucro_carteira_br']
+    lucro_carteira_usa = dados['patrimonio']['lucro_carteira_usa']
+    data = dados['patrimonio']['variacao_carteira']['variacao_diaria']['data']
+    fechamento = dados['patrimonio']['variacao_carteira']['variacao_diaria']['fechamento']
+    abertura = dados['patrimonio']['variacao_carteira']['variacao_diaria']['abertura']
+    minima = dados['patrimonio']['variacao_carteira']['variacao_diaria']['minima']
+    maxima = dados['patrimonio']['variacao_carteira']['variacao_diaria']['maxima']
+    volume = dados['patrimonio']['variacao_carteira']['variacao_diaria']['volume']
+    vol_diaria = dados['patrimonio']['volatilidade_implicita_carteira']['volatilidade_diaria']
+    vol_anual = dados['patrimonio']['volatilidade_implicita_carteira']['volatilidade_anual']
+    if len(relatoriomodel) == 0:
+        relatorioobj = RelatorioCompletoModel(patrimonio_total=patrimonio_total,patrimonio_br=patrimonio_br,patrimonio_usa=patrimonio_usa,lucro_br=lucro_carteira_br,lucro_usa=lucro_carteira_usa,data=data,abertura=abertura,fechamento=fechamento,minima=minima,maxima=maxima,volume=volume,vol_implicita_diaria=vol_diaria,vol_implicita_anual=vol_anual)
+        relatorioobj.save()
+    else:
+        try:
+            relatorio_do_dia = RelatorioCompletoModel.objects.get(data=data_de_hoje(data_str=True))
+            if relatorio_do_dia.data == data_de_hoje(data_str=False):
+                relatorio_do_dia.patrimonio_total = patrimonio_total
+                relatorio_do_dia.patrimonio_br = patrimonio_br
+                relatorio_do_dia.patrimonio_usa = patrimonio_usa
+                relatorio_do_dia.lucro_carteira_br = lucro_carteira_br
+                relatorio_do_dia.lucro_carteira_usa = lucro_carteira_usa
+                relatorio_do_dia.fechamento = fechamento
+                relatorio_do_dia.abertura = abertura
+                relatorio_do_dia.minima = minima
+                relatorio_do_dia.maxima = maxima
+                relatorio_do_dia.volume = volume
+                relatorio_do_dia.vol_diaria = vol_diaria
+                relatorio_do_dia.vol_anual = vol_anual
+                relatorio_do_dia.save()
+        except:
+                relatorioobj = RelatorioCompletoModel(patrimonio_total=patrimonio_total,patrimonio_br=patrimonio_br,patrimonio_usa=patrimonio_usa,lucro_br=lucro_carteira_br,lucro_usa=lucro_carteira_usa,data=data,abertura=abertura,fechamento=fechamento,minima=minima,maxima=maxima,volume=volume,vol_implicita_diaria=vol_diaria,vol_implicita_anual=vol_anual)
+                relatorioobj.save()
+        

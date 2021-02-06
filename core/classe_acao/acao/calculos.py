@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, date
 import requests
+import math
 
 def preco_acao(acao, portfolio_carteira):
     for valor in portfolio_carteira:
@@ -113,8 +114,6 @@ def calculo_variacao_patrimonial(db, caixa):
     caixa_total = caixa[0]['caixa_br'] + caixa[1]['caixa_usa']
     carteira_no_dia = db.objects.all()
     fechamento = round(sum([float(x.fechamento) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]) + caixa_total,2)
-    #print([float(x.fechamento) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])
-    #print([x.acao for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])
     abertura = round(sum([float(x.abertura) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+ caixa_total,2)
     minima = round(sum([float(x.minima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+caixa_total,2)
     maxima = round(sum([float(x.maxima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+caixa_total,2)
@@ -130,3 +129,54 @@ def calculo_variacao_patrimonial(db, caixa):
                                     }
                     }
     return dict_variacao
+
+def patrimonio_hoje_ontem(AcaoModel):
+    lista_do_dia = []
+    fechamento,abertura,minima,maxima,volume = [],[],[],[],[]
+    fechamento_ontem,abertura_ontem,minima_ontem,maxima_ontem,volume_ontem = [],[],[],[],[]
+    todas_acoes = AcaoModel.objects.order_by('-data')
+    teste = [lista_do_dia.append(x.data) for x in todas_acoes if x.data not in lista_do_dia]
+    hoje = lista_do_dia[0]
+    ontem = lista_do_dia[1]
+    for x in todas_acoes:
+        if x.data == hoje:
+            fechamento.append(x.fechamento * x.quantidade)
+            abertura.append(x.abertura * x.quantidade)
+            minima.append(x.minima * x.quantidade)
+            maxima.append(x.maxima * x.quantidade)
+            volume.append(x.volume)
+        if x.data == ontem:
+            fechamento_ontem.append(x.fechamento * x.quantidade)
+            abertura_ontem.append(x.abertura * x.quantidade)
+            minima_ontem.append(x.minima * x.quantidade)
+            maxima_ontem.append(x.maxima * x.quantidade)
+            volume_ontem.append(x.volume)
+
+    dict_hoje = montando_dict_volatilidade(fechamento,abertura,minima,maxima,volume,dia_de_hoje=hoje)
+    dict_ontem = montando_dict_volatilidade(fechamento_ontem,abertura_ontem,minima_ontem,maxima_ontem,volume_ontem,dia_de_hoje=ontem)
+    return dict_hoje, dict_ontem
+
+def montando_dict_volatilidade(*dados,dia_de_hoje='None'):
+    lista_dados = []
+    for x in dados:
+        soma = lista_dados.append(round(sum(x),2))
+    dict_retorno = {'dia':dia_de_hoje,
+                    'fechamento':lista_dados[0],
+                    'abertura':lista_dados[1],
+                    'minima':lista_dados[2],
+                    'maxima':lista_dados[3],
+                    'volume':lista_dados[4]
+                    }
+    return dict_retorno
+
+def variacao_da_carteira(dados):
+    valor_variacao = round((dados[0]['fechamento'] / dados[1]['fechamento']) - 1,4)
+    return valor_variacao
+
+def volatilidade_implicita_da_carteira(dados):
+    vol_diaria = float((dados[0]['fechamento'] - dados[1]['fechamento']) / dados[1]['fechamento'])
+    raiz = math.sqrt(252)
+    vol_anual = vol_diaria * raiz
+    dict_volatilidade = {'volatilidade_diaria':round(vol_diaria,4),
+                        'volatilidade_anual':round(vol_anual,4)}
+    return dict_volatilidade
