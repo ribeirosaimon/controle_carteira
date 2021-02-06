@@ -31,12 +31,14 @@ class AcaoViewSet(ModelViewSet):
 
 
         portfolio.inicializar_carteira()
+        
         caixa = portfolio.info_caixa(dolar)
+        
         informacoes_da_carteira = info_carteira(portfolio, dolar, caixa)
+        
         variacao_do_patrimonio = patrimonio_hoje_ontem(AcaoModel)
         
         portfolio.variacao_da_carteira(dolar)
-        
         dict_carteira_completo={'patrimonio':{'patrimonio_total':portfolio.patrimonio(dolar),
                          'patrimonio_br':portfolio.patrimonio(dolar,nacional=True),
                          'patrimonio_usa':portfolio.patrimonio(dolar,nacional=False),

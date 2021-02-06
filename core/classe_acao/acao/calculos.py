@@ -59,16 +59,24 @@ def data_utc(data_str, mes_passado = False):
     data = data - datetime(1970, 1, 1).date()
     return int(data.total_seconds())
 
-def data_de_hoje(data_str=True):
+def data_de_hoje(data_str=True,delta=0):
     hora_do_dia = int(datetime.now().strftime('%H'))
     data = date.today()
-    if hora_do_dia < 9:
-        data = data - timedelta(days=1)
-    if data_str == True:
-        return str(data)
-    else:
-        return data
-    
+    if delta == 0:
+        if hora_do_dia < 9:
+            data = data - timedelta(days=1)
+        if data_str == True:
+            return str(data)
+        else:
+            return data
+    if delta > 0:
+        if hora_do_dia < 9:
+            tempo = 1 + delta
+            data = data - timedelta(days=tempo)
+        if data_str == True:
+            return str(data - timedelta(days=delta))
+        else:
+            return data - timedelta(days=delta)
 
 
 def data_iso(data_str):
@@ -111,13 +119,19 @@ def calculo_de_volume(volume_medio,volume_diario,horario_comercial=8,inicio_expe
 
 
 def calculo_variacao_patrimonial(db, caixa):
+    dia_da_semana = date.today().weekday()
+    hoje = data_de_hoje(data_str=False)
+    if dia_da_semana == 5:
+        hoje = data_de_hoje(data_str=False,delta=1)
+    if dia_da_semana == 6:
+        hoje = data_de_hoje(data_str=False,delta=2)
     caixa_total = caixa[0]['caixa_br'] + caixa[1]['caixa_usa']
     carteira_no_dia = db.objects.all()
-    fechamento = round(sum([float(x.fechamento) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]) + caixa_total,2)
-    abertura = round(sum([float(x.abertura) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+ caixa_total,2)
-    minima = round(sum([float(x.minima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+caixa_total,2)
-    maxima = round(sum([float(x.maxima) * float(x.quantidade) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)])+caixa_total,2)
-    volume = round(sum([float(x.volume) for x in carteira_no_dia if x.data == data_de_hoje(data_str=False)]),0) / 1000000
+    fechamento = round(sum([float(x.fechamento) * float(x.quantidade) for x in carteira_no_dia if x.data == hoje]) + caixa_total,2)
+    abertura = round(sum([float(x.abertura) * float(x.quantidade) for x in carteira_no_dia if x.data == hoje])+ caixa_total,2)
+    minima = round(sum([float(x.minima) * float(x.quantidade) for x in carteira_no_dia if x.data == hoje])+caixa_total,2)
+    maxima = round(sum([float(x.maxima) * float(x.quantidade) for x in carteira_no_dia if x.data == hoje])+caixa_total,2)
+    volume = round(sum([float(x.volume) for x in carteira_no_dia if x.data == hoje]),0) / 1000000
     dict_variacao = {'variacao_diaria':
                                     {
                                         'data':data_de_hoje(),
