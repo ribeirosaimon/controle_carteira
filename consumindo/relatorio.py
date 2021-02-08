@@ -1,6 +1,5 @@
 relatorio = [
     {
-        "id": 3,
         "patrimonio_total": "67399.62",
         "patrimonio_br": "21541.66",
         "patrimonio_usa": "45857.96",

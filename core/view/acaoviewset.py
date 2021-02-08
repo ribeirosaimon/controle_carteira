@@ -35,16 +35,16 @@ class AcaoViewSet(ModelViewSet):
         caixa = portfolio.info_caixa(dolar)
         
         informacoes_da_carteira = info_carteira(portfolio, dolar, caixa)
-        try:
-            variacao_do_patrimonio = patrimonio_hoje_ontem(AcaoModel)
-            calculo_da_variante = calculo_variacao_patrimonial(AcaoModel, caixa)
-            vol_impl = volatilidade_implicita_da_carteira(variacao_do_patrimonio)
-            variacao_total_da_carteira = variacao_da_carteira(variacao_do_patrimonio)
-        except:
-            variacao_do_patrimonio = 0
-            calculo_da_variante = 0
-            vol_impl = 0
-            variacao_total_da_carteira = 0
+        #try:
+        variacao_do_patrimonio = patrimonio_hoje_ontem(AcaoModel)
+        calculo_da_variante = calculo_variacao_patrimonial(AcaoModel, caixa)
+        vol_impl = volatilidade_implicita_da_carteira(variacao_do_patrimonio)
+        variacao_total_da_carteira = variacao_da_carteira(variacao_do_patrimonio)
+        #except:
+        #    variacao_do_patrimonio = 0
+        #    calculo_da_variante = 0
+        #    vol_impl = 0
+        #    variacao_total_da_carteira = 0
         portfolio.variacao_da_carteira(dolar)
         dict_carteira_completo={'patrimonio':{'patrimonio_total':portfolio.patrimonio(dolar),
                          'patrimonio_br':portfolio.patrimonio(dolar,nacional=True),

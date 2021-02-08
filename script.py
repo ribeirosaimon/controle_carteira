@@ -1,11 +1,11 @@
 import requests
 
 url = 'http://127.0.0.1:8000/patrimonio/'
-
+'''
 r = requests.get(url).json()
 for x in r:
     requests.delete(f'{url}{x["id"]}')
-
+'''
 acoes = [
         {
             "acao": "caixa",
@@ -19,7 +19,6 @@ acoes = [
             "nacional": False
         },
         {
-            "id": 511,
             "acao": "cogn3",
             "quantidade": "790.00",
             "fechamento": "4.62",
@@ -31,7 +30,6 @@ acoes = [
             "nacional": True
         },
         {
-            "id": 512,
             "acao": "ctnm4",
             "quantidade": "600.00",
             "fechamento": "5.64",
@@ -43,7 +41,6 @@ acoes = [
             "nacional": True
         },
         {
-            "id": 513,
             "acao": "rlog3",
             "quantidade": "200.00",
             "fechamento": "19.90",
@@ -55,7 +52,6 @@ acoes = [
             "nacional": True
         },
         {
-            "id": 514,
             "acao": "sapr4",
             "quantidade": "1100.00",
             "fechamento": "4.37",
@@ -67,7 +63,6 @@ acoes = [
             "nacional": True
         },
         {
-            "id": 515,
             "acao": "mmm",
             "quantidade": "14.00",
             "fechamento": "949.25",
@@ -79,7 +74,6 @@ acoes = [
             "nacional": False
         },
         {
-            "id": 516,
             "acao": "ko",
             "quantidade": "38.00",
             "fechamento": "262.69",
@@ -91,7 +85,6 @@ acoes = [
             "nacional": False
         },
         {
-            "id": 517,
             "acao": "irbr3",
             "quantidade": "300.00",
             "fechamento": "7.13",
@@ -103,7 +96,6 @@ acoes = [
             "nacional": True
         },
         {
-            "id": 518,
             "acao": "tcsa3",
             "quantidade": "400.00",
             "fechamento": "9.06",
@@ -115,7 +107,6 @@ acoes = [
             "nacional": True
         },
         {
-            "id": 519,
             "acao": "meli",
             "quantidade": "2.15",
             "fechamento": "10148.35",
