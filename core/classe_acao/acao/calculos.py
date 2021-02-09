@@ -149,9 +149,7 @@ def patrimonio_hoje_ontem(AcaoModel):
     fechamento,abertura,minima,maxima,volume = [],[],[],[],[]
     fechamento_ontem,abertura_ontem,minima_ontem,maxima_ontem,volume_ontem = [],[],[],[],[]
     todas_acoes = AcaoModel.objects.order_by('-data')
-    print(todas_acoes[0].acao, '-<<<><><><><><')
     teste = [lista_do_dia.append(x.data) for x in todas_acoes if x.data not in lista_do_dia]
-    print(teste, '--------------------')
     hoje = lista_do_dia[0]
     ontem = lista_do_dia[1]
     for x in todas_acoes:

@@ -39,6 +39,21 @@ def conferindo_acao_no_db(carteira,dolar):
     else:
         for x in carteira:
             acao_no_db = AcaoModel.objects.filter(acao=x['acao'], data=data_de_hoje(data_str=False))
+            if len(acao_no_db) == 0:
+                for x in carteira:
+                    fechamento = x['close']
+                    abertura = x['open']
+                    minima = x['min']
+                    maxima = x['max']
+                    if x['nacional'] == False:
+                        fechamento = float(fechamento) * dolar
+                        abertura = float(abertura) * dolar
+                        minima = float(minima) * dolar
+                        maxima = float(maxima) * dolar
+                    patrimonio_obj = AcaoModel(acao=x['acao'],quantidade=x['quantidade'],nacional=x['nacional'],fechamento=fechamento,
+                                                abertura=abertura,minima=minima,maxima=maxima,volume=x['volume'],data=x['data'])
+                    patrimonio_obj.save()
+
             for y in acao_no_db:
                 y = AcaoModel.objects.get(pk=y.pk)
                 y.fechamento = x['close']
