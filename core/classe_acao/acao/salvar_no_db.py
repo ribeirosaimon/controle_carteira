@@ -11,7 +11,7 @@ def salvar_em_db(carteira,dolar,caixa):
     dia_da_semana = date.today().weekday()
     if dia_da_semana == 5 or dia_da_semana == 6:
         return
-    if 9 > hora_do_dia or hora_do_dia > 22:
+    if 9 > hora_do_dia or hora_do_dia > 23:
         return
     else:
         conferindo_acao_no_db(carteira,dolar)
